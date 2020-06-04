@@ -1,0 +1,108 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\ProductCategory;
+use http\Client\Curl\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+class ProductcategoriesController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        //
+        $categories = ProductCategory::all();
+        return view('products.categories.index',compact('categories'));
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        //
+        return view('products.categories.create');
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+        //
+        $user = Auth::user();
+        if ($user->hasRole('government')){
+            $this->validate($request,[
+                'name'=>'required|unique:product_categories',
+                'display_name'=>'required'
+            ]);
+
+            $category = new ProductCategory();
+            $category->name = $request->input('name');
+            $category->display_name = $request->input('display_name');
+            $category->save();
+
+            return redirect()->route('product_category.index')->with('success','Product category added successfully');
+        }
+        else {
+            return redirect()->back()->with('error','Ooops! Only authorised persons can access this service');
+        }
+
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id)
+    {
+        //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+        //
+    }
+}
